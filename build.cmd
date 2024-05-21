@@ -1,0 +1,3 @@
+@echo off
+echo Building API containers...
+docker compose -p models-api-proxy up -d --build --remove-orphans

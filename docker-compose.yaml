@@ -1,0 +1,46 @@
+version: '3.5'
+
+volumes:
+  certificates:
+
+services:
+  dc-dtm-api-service:
+    container_name: dc-dtm-api
+    image: uowcpc/dc-dtm-api:latest
+    build:
+      context: cert/
+      args:
+        - SERVICE_URL=http://172.16.36.177:8080
+        - SERVICE_DOMAIN=dc-dtm-api.pithia.eu
+        - SERVICE_EMAIL=kagiald1@westminster.ac.uk
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certificates:/etc/letsencrypt
+    healthcheck:
+      test: [ 'CMD', '/opt/status.sh' ]
+      start_period: 30s
+      interval: 1m
+      timeout: 5s
+    restart: unless-stopped
+  wf-dtm-api-service:
+    container_name: wf-dtm-api
+    image: uowcpc/wf-dtm-api:latest
+    build:
+      context: cert/
+      args:
+        - SERVICE_URL=http://172.16.36.177:8081
+        - SERVICE_DOMAIN=wf-dtm-api.pithia.eu
+        - SERVICE_EMAIL=kagiald1@westminster.ac.uk
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - certificates:/etc/letsencrypt
+    healthcheck:
+      test: [ 'CMD', '/opt/status.sh' ]
+      start_period: 30s
+      interval: 1m
+      timeout: 5s
+    restart: unless-stopped

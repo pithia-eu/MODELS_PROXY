@@ -4,38 +4,20 @@ volumes:
   certificates:
 
 services:
-  dc-dtm-api-service:
-    container_name: dc-dtm-api
-    image: uowcpc/dc-dtm-api:latest
+  models-api-ssl-service:
+    container_name: models-api-ssl
+    image: uowcpc/models-api-ssl:latest
     build:
       context: cert/
       args:
-        - SERVICE_URL=http://172.16.36.177:8080
-        - SERVICE_DOMAIN=dc-dtm-api.pithia.eu
+        - DC_DTM_SERVICE_URL=http://172.16.36.177:8080
+        - DC_DTM_SERVICE_DOMAIN=dc-dtm-api.pithia.eu
+        - WF_DTM_SERVICE_URL=http://172.16.36.177:8081
+        - WF_DTM_SERVICE_DOMAIN=wf-dtm-api.pithia.eu
         - SERVICE_EMAIL=kagiald1@westminster.ac.uk
     ports:
-      - "8080:80"
-      - "8443:443"
-    volumes:
-      - certificates:/etc/letsencrypt
-    healthcheck:
-      test: [ 'CMD', '/opt/status.sh' ]
-      start_period: 30s
-      interval: 1m
-      timeout: 5s
-    restart: unless-stopped
-  wf-dtm-api-service:
-    container_name: wf-dtm-api
-    image: uowcpc/wf-dtm-api:latest
-    build:
-      context: cert/
-      args:
-        - SERVICE_URL=http://172.16.36.177:8081
-        - SERVICE_DOMAIN=wf-dtm-api.pithia.eu
-        - SERVICE_EMAIL=kagiald1@westminster.ac.uk
-    ports:
-      - "8081:80"
-      - "8444:443"
+      - "80:80"
+      - "443:443"
     volumes:
       - certificates:/etc/letsencrypt
     healthcheck:

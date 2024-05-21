@@ -3,13 +3,17 @@ FROM nginx:1.21-alpine
 MAINTAINER Levente Farkas (levente.farkas@egi.eu)
 
 # Build-time variables specified by docker-compose.yml / .env
-ARG SERVICE_URL
-ARG SERVICE_DOMAIN
+ARG DC_DTM_SERVICE_URL
+ARG DC_DTM_SERVICE_DOMAIN
+ARG WF_DTM_SERVICE_URL
+ARG WF_DTM_SERVICE_DOMAIN
 ARG SERVICE_EMAIL
 
 # Define environment variables
-ENV SERVICE_URL ${SERVICE_URL}
-ENV DOMAIN ${SERVICE_DOMAIN}
+ENV DC_DTM_SERVICE_URL ${DC_DTM_SERVICE_URL}
+ENV DC_DTM_SERVICE_DOMAIN ${DC_DTM_SERVICE_DOMAIN}
+ENV WF_DTM_SERVICE_URL ${WF_DTM_SERVICE_URL}
+ENV WF_DTM_SERVICE_DOMAIN ${WF_DTM_SERVICE_DOMAIN}
 ENV EMAIL ${SERVICE_EMAIL}
 
 # Install certbot and openssl
@@ -20,7 +24,7 @@ RUN apk add inotify-tools openssl certbot
 COPY ssl/ /etc/ssl-options
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY cert-nginx.conf /etc/nginx/conf.d/default.conf.template
-RUN envsubst '${DOMAIN}${SERVICE_URL}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && \
+RUN envsubst '${DC_DTM_SERVICE_DOMAIN}${DC_DTM_SERVICE_URL}${WF_DTM_SERVICE_DOMAIN}${WF_DTM_SERVICE_URL}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && \
     rm -f /etc/nginx/conf.d/default.conf.template && \
     rm -f /etc/nginx/sites-enabled/default && \
     mkdir -p /var/cache/nginx/proxycache && \
